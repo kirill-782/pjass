@@ -4,7 +4,7 @@
 #include "misc.h"
 
 #ifndef VERSIONSTR
-#define VERSIONSTR "1.0-git"
+#define VERSIONSTR "1.1-git"
 #endif
 
 static struct typenode* addPrimitiveType(const char *name)
@@ -53,6 +53,7 @@ static void init()
     curtab = &globals;
 
     pjass_flags = 0;
+    ignorefunctionflags = 0;
 
     fno = 0;
     fnannotations = 0;
@@ -191,6 +192,11 @@ static void doparse(int argc, char **argv)
         if (strcmp(argv[i], "-v") == 0) {
             printf("%s version %s\n", argv[0], VERSIONSTR);
             exit(0);
+        }
+        if ( strcmp( argv[i], "-nff" ) == 0 || strcmp( argv[i], "--no-functional-flags" ) == 0 )
+        {
+            ignorefunctionflags = 1;
+            continue;
         }
         if( isflag(argv[i], &available_flags)){
             pjass_flags = updateflag(pjass_flags, argv[i], &available_flags);

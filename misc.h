@@ -103,6 +103,7 @@ int updateannotation(int cur, char *txt, struct hashtable *flags);
 bool flagenabled(int flag);
 
 extern int pjass_flags;
+extern int ignorefunctionflags;
 
 extern int fno, lineno, totlines, islinebreak;
 extern bool isconstant, inconstant, infunction, inblock;

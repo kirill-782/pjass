@@ -13,6 +13,7 @@
 #include "misc.h"
 
 int pjass_flags;
+int ignorefunctionflags;
 
 int fno;
 int lineno;
@@ -584,7 +585,7 @@ int updateannotation(int cur, char *txt, struct hashtable *flags){
 
 bool flagenabled(int flag)
 {
-    if(infunction){
+    if(infunction && !ignorefunctionflags){
         return (fnannotations & flag);
     }else{
         return (pjass_flags & flag);
