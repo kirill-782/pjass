@@ -55,6 +55,7 @@ enum errortype {
     semanticerror,
     runtimeerror,
     warning,
+	notice,
 };
 
 enum {
@@ -66,6 +67,7 @@ enum {
     flag_runtimeerror = 1 << 5,
     flag_checkglobalsinit = 1 << 6,
     flag_checkstringhash = 1 << 7,
+	flag_forcenotice = 1 << 8,
 };
 
 enum {

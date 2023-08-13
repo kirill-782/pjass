@@ -79,7 +79,8 @@ static void init()
     ht_put(&available_flags, "nosemanticerror", (void*)flag_semanticerror);
     ht_put(&available_flags, "noruntimeerror", (void*)flag_runtimeerror);
     ht_put(&available_flags, "checkglobalsinit", (void*)flag_checkglobalsinit);
-    ht_put(&available_flags, "checkstringhash", (void*)flag_checkstringhash);
+	ht_put(&available_flags, "checkstringhash", (void*)flag_checkstringhash);
+	ht_put(&available_flags, "forcenotice", (void*)flag_forcenotice);
 
     ht_init(&flags_helpstring, 16);
     ht_put(&flags_helpstring, "rb", "Toggle returnbug checking");
@@ -89,7 +90,8 @@ static void init()
     ht_put(&flags_helpstring, "nosemanticerror", "Toggle semantic error reporting");
     ht_put(&flags_helpstring, "noruntimeerror", "Toggle runtime error reporting");
     ht_put(&flags_helpstring, "checkglobalsinit", "Toggle a very bad checker for uninitialized globals usage");
-    ht_put(&flags_helpstring, "checkstringhash", "Toggle StringHash collision checking");
+	ht_put(&flags_helpstring, "checkstringhash", "Toggle StringHash collision checking");
+	ht_put(&flags_helpstring, "forcenotice", "Toggle enforce display notice logs");
 
 
 
@@ -122,7 +124,7 @@ static void dofile(FILE *fp, const char *name)
     if (olderrs == haderrors){
         printf("Parse successful: %8d lines: %s\n", lineno, curfile);
     }else{
-        printf("%s failed with %d error%s\n", curfile, haderrors - olderrs,(haderrors == olderrs + 1) ? "" : "s");
+        printf("%s: failed with %d error%s\n", curfile, haderrors - olderrs,(haderrors == olderrs + 1) ? "" : "s");
     }
     totlines += lineno;
     fno++;

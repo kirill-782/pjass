@@ -64,7 +64,7 @@ ID       [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
 
 [']\\[btrnf\\]['] { return UNITTYPEINT; }
 [']\\(.|[\r\n])['] {
-        yyerrorline(syntaxerror, lineno, "Invalid escape character sequence");
+        yyerrorline(syntaxerror, lineno, "2-1: Invalid escape character sequence");
         return UNITTYPEINT; 
     }
 
@@ -75,7 +75,7 @@ ID       [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
     }
 <RAWCODE>['] {
         if(rawcodelen != 4 && rawcodelen != 1){
-            yyerrorline(syntaxerror, rawcodestartline, "Rawcodes must consist of 1 or 4 characters");
+            yyerrorline(syntaxerror, rawcodestartline, "2-2: Rawcodes must consist of 1 or 4 characters");
         }
         BEGIN(INITIAL);
         return UNITTYPEINT;
@@ -83,10 +83,10 @@ ID       [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
 
 <RAWCODE>\\[btrnf"\\] {
         rawcodelen++;
-        yyerrorline(syntaxerror, rawcodestartline, "Escaped chars are only allowed if they are the only char in the rawcode.");
+        yyerrorline(syntaxerror, rawcodestartline, "2-3: Escaped chars are only allowed if they are the only char in the rawcode.");
     }
 <RAWCODE>\\(.|[\r\n]) {
-        yyerrorline(syntaxerror, lineno, "Invalid escape character sequence");
+        yyerrorline(syntaxerror, lineno, "2-4: Invalid escape character sequence");
         rawcodelen++;
     }
 
@@ -103,7 +103,7 @@ ID       [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
 <INSTRING>\\[btrnf"\\] {
     str_append(stringlit_buff, yytext, stringlit_buffsize);
 }
-<INSTRING>\\(.|[\r\n]) { yyerrorline(syntaxerror, lineno, "Invalid escape character sequence"); }
+<INSTRING>\\(.|[\r\n]) { yyerrorline(syntaxerror, lineno, "2-5: Invalid escape character sequence"); }
 
 <INSTRING>\r?\n {
     str_append(stringlit_buff, yytext, stringlit_buffsize);
@@ -129,35 +129,35 @@ ID       [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
 {DIGIT}+"."{DIGIT}+  return REALLIT;
 "."{DIGIT}+  return REALLIT;
 {DIGIT}+"." return REALLIT;
-"0"({OCTDIGIT}*("8"|"9"){OCTDIGIT}*)+ yyerrorline(syntaxerror, lineno, "Invalid digit in octal integer notation"); return INTLIT;
+"0"({OCTDIGIT}*("8"|"9"){OCTDIGIT}*)+ yyerrorline(syntaxerror, lineno, "2-6: Invalid digit in octal integer notation"); return INTLIT;
 ({DIGIT}+)|(("0x"|"0X"|"$"){HEXDIGIT}+) return INTLIT;
 
-"if" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before if"); islinebreak=0; return IF;
+"if" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-7: Missing linebreak before if"); islinebreak=0; return IF;
 "not" return NOT;
 "then" return THEN;
-"type" if (!islinebreak) { char ebuf[1024]; sprintf(ebuf, "Missing linebreak before type declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return TYPE;
+"type" if (!islinebreak) { char ebuf[1024]; sprintf(ebuf, "2-8: Missing linebreak before type declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return TYPE;
 "extends" return EXTENDS;
 "handle" islinebreak=0; return HANDLE;
-"globals" if (!islinebreak) { char ebuf[1024]; sprintf(ebuf, "Missing linebreak before globals block"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; inblock=1; return GLOBALS;
+"globals" if (!islinebreak) { char ebuf[1024]; sprintf(ebuf, "2-9: Missing linebreak before globals block"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; inblock=1; return GLOBALS;
 "endglobals" islinebreak=0; inblock=0; return ENDGLOBALS;
 "constant" isconstant = islinebreak; islinebreak=0; return CONSTANT;
-"native" if (!islinebreak && !isconstant) { char ebuf[1024]; sprintf(ebuf, "Missing linebreak before native declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return NATIVE;
+"native" if (!islinebreak && !isconstant) { char ebuf[1024]; sprintf(ebuf, "2-10: Missing linebreak before native declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return NATIVE;
 "takes" return TAKES;
 "returns" return RETURNS;
-"function" if (!islinebreak && !isconstant && !inblock) { char ebuf[1024]; sprintf(ebuf, "Missing linebreak before function declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return FUNCTION;
+"function" if (!islinebreak && !isconstant && !inblock) { char ebuf[1024]; sprintf(ebuf, "2-11: Missing linebreak before function declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return FUNCTION;
 "endfunction" islinebreak=0; return ENDFUNCTION;
-"local" if (!islinebreak) { char ebuf[1024]; sprintf(ebuf, "Missing linebreak before local declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return LOCAL;
+"local" if (!islinebreak) { char ebuf[1024]; sprintf(ebuf, "2-12: Missing linebreak before local declaration"); yyerrorline(syntaxerror, lineno, ebuf); } islinebreak=0; return LOCAL;
 "array" return ARRAY;
-"set" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before assignment"); islinebreak=0; return SET;
-"call" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before function call"); islinebreak=0; return CALL;
-"else" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before else"); islinebreak=0; return ELSE;
-"elseif" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before elseif"); islinebreak=0; return ELSEIF;
-"endif" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before endif"); islinebreak=0; return ENDIF;
-"loop" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before loop"); islinebreak=0; return LOOP;
-"exitwhen" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before exitwhen"); islinebreak=0; return EXITWHEN;
-"return" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before return"); islinebreak=0; return RETURN;
+"set" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-13: Missing linebreak before assignment"); islinebreak=0; return SET;
+"call" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-14: Missing linebreak before function call"); islinebreak=0; return CALL;
+"else" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-15: Missing linebreak before else"); islinebreak=0; return ELSE;
+"elseif" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-16: Missing linebreak before elseif"); islinebreak=0; return ELSEIF;
+"endif" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-17: Missing linebreak before endif"); islinebreak=0; return ENDIF;
+"loop" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-18: Missing linebreak before loop"); islinebreak=0; return LOOP;
+"exitwhen" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-19: Missing linebreak before exitwhen"); islinebreak=0; return EXITWHEN;
+"return" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-20: Missing linebreak before return"); islinebreak=0; return RETURN;
 "debug" return DEBUG;
-"endloop" if (!islinebreak) yyerrorline(syntaxerror, lineno, "Missing linebreak before endloop"); islinebreak=0; return ENDLOOP;
+"endloop" if (!islinebreak) yyerrorline(syntaxerror, lineno, "2-21: Missing linebreak before endloop"); islinebreak=0; return ENDLOOP;
 "null" return TNULL;
 "true" return TTRUE;
 "false" return TFALSE;
@@ -196,7 +196,7 @@ ID       [a-zA-Z]([a-zA-Z0-9_]*[a-zA-Z0-9])?
 [ \t]+          /* eat up whitespace */
 \xEF\xBB\xBF    /* utf8 bom */
 
-.            { char ebuf[1024]; sprintf(ebuf, "Unrecognized character %s (ASCII %u)", yytext, (unsigned char)yytext[0] ); yyerrorline(syntaxerror, lineno, ebuf); }
+.            { char ebuf[1024]; sprintf(ebuf, "2-22: Unrecognized character %s (ASCII %u)", yytext, (unsigned char)yytext[0] ); yyerrorline(syntaxerror, lineno, ebuf); }
 
 %%
 
